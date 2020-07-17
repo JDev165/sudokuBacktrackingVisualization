@@ -3,9 +3,31 @@ class Board:
         self.board = board
 
     def solve(self):
+        # Will handle the backtracking
         pass
 
-    def isValid(self):
+    def _isValid(self):
+        # Return validVertically and validHorizontally and validSubgrid
+        pass
+
+    def _validVertically(self, emptyCellLocation: tuple, numberToTry: int):
+        columnIndex = emptyCellLocation[1]
+        valid = True
+        for row in range(0, 9):
+            if self.board[row][columnIndex] == numberToTry:
+                valid = False
+                break
+
+        return valid
+
+    def _validHorizontally(self, emptyCellLocation: tuple, numberToTry: int):
+        rowIndex = emptyCellLocation[0]
+        rowToCheck = self.board[rowIndex]
+        valid = True if numberToTry not in rowToCheck else False
+
+        return valid
+
+    def _validSubgrid(self):
         pass
 
     def print(self):
