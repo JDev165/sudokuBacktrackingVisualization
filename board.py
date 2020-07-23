@@ -2,23 +2,31 @@ class Board:
     def __init__(self, board):
         self._board = board
 
+    def getBoard(self):
+        return self._board
+
     def solve(self):
         # Will handle the backtracking
         nextEmptyCell = self._getNextEmptyCell()
         if nextEmptyCell == None:
             return True
-        
+
         # Try all numbers from 1 to 9
         for numberToTry in range(1, 10):
-            # Check if numberToTry is valid
-            # If valid, call solve recursively and check if solve returns true. If so, return True
-            # If none of the values are valid, return false               
+            if self._isValid(nextEmptyCell, numberToTry):
+                # Set to numberToTry if valid
+                self._board[nextEmptyCell[0]][nextEmptyCell[1]] = numberToTry
+                if self.solve():
+                    return True
+                # Backtrack and reset teh previous value if next recursive call returns False
+                self._board[nextEmptyCell[0]][nextEmptyCell[1]] = 0
+        return False
 
     def _getNextEmptyCell(self):
         emptyCellLocation = None
         for row in range(len(self._board)):
             for col in range(len(self._board)):
-                if self._board[row][col] = 0:
+                if self._board[row][col] == 0:
                     emptyCellLocation = (row, col)
         return emptyCellLocation
 
@@ -78,6 +86,11 @@ def main():
                 [5, 1, 9, 3, 2, 6, 8, 7, 4],
                 [2, 4, 8, 9, 5, 7, 1, 3, 6],
                 [7, 6, 3, 4, 1, 8, 2, 5, 9]]
+
+    boardToSolve = Board(board)
+    solved = boardToSolve.solve()
+    if solved:
+        print(boardToSolve.getBoard())
 
 
 if __name__ == "__main__":
