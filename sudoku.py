@@ -1,4 +1,4 @@
-class Board:
+class Sudoku:
     def __init__(self, board):
         self._board = board
 
@@ -18,11 +18,11 @@ class Board:
                 self._board[nextEmptyCell[0]][nextEmptyCell[1]] = numberToTry
                 if self.solve():
                     return True
-                # Backtrack and reset teh previous value if next recursive call returns False
+                # Backtrack and reset the previous value if next recursive call returns False
                 self._board[nextEmptyCell[0]][nextEmptyCell[1]] = 0
         return False
 
-    def _getNextEmptyCell(self):
+    def getNextEmptyCell(self):
         emptyCellLocation = None
         for row in range(len(self._board)):
             for col in range(len(self._board)):
@@ -86,11 +86,6 @@ def main():
                 [5, 1, 9, 3, 2, 6, 8, 7, 4],
                 [2, 4, 8, 9, 5, 7, 1, 3, 6],
                 [7, 6, 3, 4, 1, 8, 2, 5, 9]]
-
-    boardToSolve = Board(board)
-    solved = boardToSolve.solve()
-    if solved:
-        print(boardToSolve.getBoard())
 
 
 if __name__ == "__main__":
