@@ -22,7 +22,7 @@ class Sudoku:
                 self._board[nextEmptyCell[0]][nextEmptyCell[1]] = 0
         return False
 
-    def getNextEmptyCell(self):
+    def _getNextEmptyCell(self):
         emptyCellLocation = None
         for row in range(len(self._board)):
             for col in range(len(self._board)):
