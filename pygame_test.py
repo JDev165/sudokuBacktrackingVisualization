@@ -1,22 +1,6 @@
 import pygame
+from constants import *
 from pygame.locals import *
-
-SCREEN_SIZE_DIVISIBLE_BY_NINE = 108
-SCREEN_SIZE_MULTIPLIER = 6
-SCREEN_WIDTH = SCREEN_SIZE_DIVISIBLE_BY_NINE * SCREEN_SIZE_MULTIPLIER
-SCREEN_HEIGHT = SCREEN_SIZE_DIVISIBLE_BY_NINE * SCREEN_SIZE_MULTIPLIER
-SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
-SUDOKU_BOARD_OFFSET = SCREEN_SIZE_MULTIPLIER - 1
-SUDOKU_BOARD_WIDTH = SCREEN_SIZE_DIVISIBLE_BY_NINE * SUDOKU_BOARD_OFFSET
-SUDOKU_BOARD_HEIGHT = SCREEN_SIZE_DIVISIBLE_BY_NINE * SUDOKU_BOARD_OFFSET
-WHITE = (250, 250, 250)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-CENTER_SCREEN_X = SCREEN_SIZE[0] // 2
-CENTER_SCREEN_Y = SCREEN_SIZE[1] // 2
-SUDOKU_BOARD_SIZE = (SUDOKU_BOARD_WIDTH, SUDOKU_BOARD_HEIGHT)
-SUDOKU_BOARD_LARGE_SQUARE_SIZE = SUDOKU_BOARD_WIDTH // 3
-SUDOKU_BOARD_SMALL_SQUARE_SIZE = SUDOKU_BOARD_WIDTH // 9
 
 pygame.init()
 
@@ -55,6 +39,7 @@ incrementSmallSquares = SUDOKU_BOARD_SMALL_SQUARE_SIZE
 selectionPosition = None
 sudokuArrayCoordinates = None
 selectionRect = None
+clickedInsideBoard = None
 running = True
 while running:
     for event in pygame.event.get():
@@ -75,8 +60,15 @@ while running:
             # ycord = row, xcord = column in 2d array
             # Look at this when updating/pulling from 2d array
             sudokuArrayCoordinates = (cellYCord, cellXCord)
-            print(selectionPosition)
             selectionRect = Rect(selectionPosition, (60, 60))
+
+            # Use to check if we clicked inside the board or outside
+            # If any of the coordinates are negative, we're outside the board
+            # Also have to check for values larger than the width and height of the board
+            areaClicked = (pygame.mouse.get_pos()[
+                           0] - CENTERED_SUDOKU_ZERO_X_CORD, CENTERED_SUDOKU_HEIGHT_CORD - pygame.mouse.get_pos()[1])
+            clickedInsideBoard = True if (areaClicked[0] > 0 and areaClicked[1] > 0) and (
+                areaClicked[0] < SUDOKU_BOARD_WIDTH and areaClicked[1] < SUDOKU_BOARD_WIDTH) else False
 
     pygame.display.set_caption("Sudoku")
     screen.fill(WHITE)
@@ -95,7 +87,7 @@ while running:
         ycord = xcord
         pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
 
-    if selectionRect:
+    if selectionRect and clickedInsideBoard:
         pygame.draw.rect(screen, RED, selectionRect, 2)
     pygame.display.update()
 
