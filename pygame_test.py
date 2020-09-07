@@ -4,6 +4,9 @@ from pygame.locals import *
 
 pygame.init()
 
+font = pygame.font.SysFont(
+    'arial', 35)
+
 screen = pygame.display.set_mode(SCREEN_SIZE)
 sudoku_board = Rect(SUDOKU_BOARD_SIZE, SUDOKU_BOARD_SIZE)
 sudoku_board.centery = CENTER_SCREEN_X
@@ -47,7 +50,7 @@ while running:
             running = False
             pygame.quit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
-                # the coordinate system in pygame
+            # the coordinate system in pygame
             cellXCord = (pygame.mouse.get_pos(
             )[0] - CENTERED_SUDOKU_ZERO_X_CORD) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
             cellYCord = (pygame.mouse.get_pos(
@@ -60,6 +63,8 @@ while running:
             # ycord = row, xcord = column in 2d array
             # Look at this when updating/pulling from 2d array
             sudokuArrayCoordinates = (cellYCord, cellXCord)
+            editableCell = 0 if board[sudokuArrayCoordinates[0]
+                                      ][sudokuArrayCoordinates[1]] > 0 else 1
             selectionRect = Rect(selectionPosition, (60, 60))
 
             # Use to check if we clicked inside the board or outside
@@ -87,8 +92,24 @@ while running:
         ycord = xcord
         pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
 
-    if selectionRect and clickedInsideBoard:
+    # Draw numbers
+
+    for row in range(len(board)):
+        for col in range(len(board)):
+            if board[row][col] != 0:
+                cellNumber = str(board[row][col])
+                textImage = font.render(cellNumber, False, BLACK)
+                # flip the coordinates to match row/column positioning
+                # x axis in pygame lines up in the same direction as grid column
+                # y axis in pygame lines up in the same direction as grid row
+                textPosition = ((col * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD,
+                                (row * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD)
+                screen.blit(
+                    textImage, (textPosition[0] + SUDOKU_NUMBER_X_OFFSET, textPosition[1] + SUDOKU_NUMBER_Y_OFFSET))
+
+    if selectionRect and clickedInsideBoard and editableCell:
         pygame.draw.rect(screen, RED, selectionRect, 2)
+
     pygame.display.update()
 
 pygame.quit()
