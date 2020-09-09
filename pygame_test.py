@@ -75,6 +75,12 @@ while running:
             clickedInsideBoard = True if (areaClicked[0] > 0 and areaClicked[1] > 0) and (
                 areaClicked[0] < SUDOKU_BOARD_WIDTH and areaClicked[1] < SUDOKU_BOARD_WIDTH) else False
 
+        elif event.type == pygame.KEYDOWN:
+            if selectionRect and clickedInsideBoard and editableCell and isInt(event.unicode):
+                row = sudokuArrayCoordinates[0]
+                col = sudokuArrayCoordinates[1]
+                board[row][col] = int(event.unicode)
+
     pygame.display.set_caption("Sudoku")
     screen.fill(WHITE)
     pygame.draw.rect(screen, BLACK, sudoku_board, 1)
@@ -104,8 +110,17 @@ while running:
                 # y axis in pygame lines up in the same direction as grid row
                 textPosition = ((col * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD,
                                 (row * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD)
+
+                # Ex: cell 4's position is 234, 54 so to center the text
+                # Add 60 // 2 to the with and height of the cell to shift the image to the center
+                # Center fo cell 4 would be 264, 84
+                textPositionCentered = (
+                    textPosition[0] + SUDOKU_BOARD_SMALL_SQUARE_SIZE // 2, textPosition[1] + SUDOKU_BOARD_SMALL_SQUARE_SIZE // 2)
+
+                textRect = textImage.get_rect(center=textPositionCentered)
+
                 screen.blit(
-                    textImage, (textPosition[0] + SUDOKU_NUMBER_X_OFFSET, textPosition[1] + SUDOKU_NUMBER_Y_OFFSET))
+                    textImage, textRect)
 
     if selectionRect and clickedInsideBoard and editableCell:
         pygame.draw.rect(screen, RED, selectionRect, 2)
