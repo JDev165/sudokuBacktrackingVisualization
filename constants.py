@@ -3,6 +3,7 @@
 WHITE = (250, 250, 250)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+WARNINGCOLOR = (195, 121, 121)
 
 # Screen/Board Stuff
 
@@ -43,3 +44,7 @@ def isInt(value):
     except:
         valueIsInt = False
     return valueIsInt
+
+
+def toPygameCoordinates(array_position, CENTERED_SUDOKU_ZERO_X_CORD):
+    return ((int(array_position[0]) * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD, (int(array_position[1]) * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD)

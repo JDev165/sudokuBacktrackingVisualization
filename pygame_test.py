@@ -1,6 +1,11 @@
 import pygame
 from constants import *
 from pygame.locals import *
+from sudoku_api import *
+
+sudokuAPI = SudokuAPI(board)
+editableCells = sudokuAPI.getEmptyCells()
+wrongChoices = {}
 
 pygame.init()
 
@@ -43,6 +48,7 @@ selectionPosition = None
 sudokuArrayCoordinates = None
 selectionRect = None
 clickedInsideBoard = None
+validSelection = True
 running = True
 while running:
     for event in pygame.event.get():
@@ -55,31 +61,40 @@ while running:
             )[0] - CENTERED_SUDOKU_ZERO_X_CORD) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
             cellYCord = (pygame.mouse.get_pos(
             )[1] - CENTERED_SUDOKU_ZERO_X_CORD) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
+            selectionPygameCoords = tuple((cellXCord, cellYCord))
+            selectionPosition = toPygameCoordinates(
+                selectionPygameCoords, CENTERED_SUDOKU_ZERO_X_CORD)
 
-            selectionPosition = (
-                (cellXCord * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD, (cellYCord * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + CENTERED_SUDOKU_ZERO_X_CORD)
             # Need to convert pygame coordinates to the sudoku 2d array indexes
             # Just need to flip the coordinates
             # ycord = row, xcord = column in 2d array
             # Look at this when updating/pulling from 2d array
             sudokuArrayCoordinates = (cellYCord, cellXCord)
-            editableCell = 0 if board[sudokuArrayCoordinates[0]
-                                      ][sudokuArrayCoordinates[1]] > 0 else 1
+            value = board[sudokuArrayCoordinates[0]
+                          ][sudokuArrayCoordinates[1]]
+
+            isEditableCell = 1 if sudokuArrayCoordinates in editableCells else 0
+
             selectionRect = Rect(selectionPosition, (60, 60))
 
             # Use to check if we clicked inside the board or outside
             # If any of the coordinates are negative, we're outside the board
             # Also have to check for values larger than the width and height of the board
             areaClicked = (pygame.mouse.get_pos()[
-                           0] - CENTERED_SUDOKU_ZERO_X_CORD, CENTERED_SUDOKU_HEIGHT_CORD - pygame.mouse.get_pos()[1])
+                0] - CENTERED_SUDOKU_ZERO_X_CORD, CENTERED_SUDOKU_HEIGHT_CORD - pygame.mouse.get_pos()[1])
             clickedInsideBoard = True if (areaClicked[0] > 0 and areaClicked[1] > 0) and (
                 areaClicked[0] < SUDOKU_BOARD_WIDTH and areaClicked[1] < SUDOKU_BOARD_WIDTH) else False
 
         elif event.type == pygame.KEYDOWN:
-            if selectionRect and clickedInsideBoard and editableCell and isInt(event.unicode):
+            if selectionRect and clickedInsideBoard and isEditableCell and isInt(event.unicode):
+                chosenNumber = int(event.unicode)
                 row = sudokuArrayCoordinates[0]
                 col = sudokuArrayCoordinates[1]
-                board[row][col] = int(event.unicode)
+
+                if not sudokuAPI.isValid(sudokuArrayCoordinates, chosenNumber):
+                    wrongChoices[sudokuArrayCoordinates] = chosenNumber
+
+                board[row][col] = chosenNumber
 
     pygame.display.set_caption("Sudoku")
     screen.fill(WHITE)
@@ -97,6 +112,14 @@ while running:
         pygame.draw.line(screen, BLACK, (xcord, y1cord), (xcord, y2cord))
         ycord = xcord
         pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
+
+    # Draw error shade before number or else number disappears
+
+    for choice in wrongChoices:
+        pygameCellCoords = toPygameCoordinates(
+            choice, CENTERED_SUDOKU_ZERO_X_CORD)
+        wrongRect = Rect(pygameCellCoords, (60, 60))
+        pygame.draw.rect(screen, WARNINGCOLOR, wrongRect)
 
     # Draw numbers
 
@@ -122,7 +145,7 @@ while running:
                 screen.blit(
                     textImage, textRect)
 
-    if selectionRect and clickedInsideBoard and editableCell:
+    if selectionRect and clickedInsideBoard and isEditableCell:
         pygame.draw.rect(screen, RED, selectionRect, 2)
 
     pygame.display.update()

@@ -30,7 +30,7 @@ class Sudoku:
                     emptyCellLocation = (row, col)
         return emptyCellLocation
 
-    def _isValid(self, emptyCellLocation: tuple, numberToTry: int):
+    def isValid(self, emptyCellLocation: tuple, numberToTry: int):
         # Return validVertically and validHorizontally and validSubgrid
         validNumber = self._validVertically(emptyCellLocation, numberToTry) and self._validHorizontally(
             emptyCellLocation, numberToTry) and self._validSubgrid(emptyCellLocation, numberToTry)
