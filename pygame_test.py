@@ -70,8 +70,6 @@ while running:
             # ycord = row, xcord = column in 2d array
             # Look at this when updating/pulling from 2d array
             sudokuArrayCoordinates = (cellYCord, cellXCord)
-            value = board[sudokuArrayCoordinates[0]
-                          ][sudokuArrayCoordinates[1]]
 
             isEditableCell = 1 if sudokuArrayCoordinates in editableCells else 0
 
@@ -91,8 +89,14 @@ while running:
                 row = sudokuArrayCoordinates[0]
                 col = sudokuArrayCoordinates[1]
 
+                pygameCoordinates = (col, row)
                 if not sudokuAPI.isValid(sudokuArrayCoordinates, chosenNumber):
-                    wrongChoices[sudokuArrayCoordinates] = chosenNumber
+                    # Need to flip the coordinates again to fit pygame board
+                    wrongChoices[pygameCoordinates] = chosenNumber
+                else:
+                    # Second argument prevents an error if
+                    # Key doesn't exists in dictionary
+                    wrongChoices.pop(pygameCoordinates, None)
 
                 board[row][col] = chosenNumber
 

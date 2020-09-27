@@ -7,8 +7,11 @@ class SudokuAPI:
 
     def isValid(self, emptyCellLocation: tuple, numberToTry: int):
         # Return validVertically and validHorizontally and validSubgrid
-        validNumber = self._validVertically(emptyCellLocation, numberToTry) and self._validHorizontally(
-            emptyCellLocation, numberToTry) and self._validSubgrid(emptyCellLocation, numberToTry)
+        if numberToTry == 0:
+            validNumber = True
+        else:
+            validNumber = self._validVertically(emptyCellLocation, numberToTry) and self._validHorizontally(
+                emptyCellLocation, numberToTry) and self._validSubgrid(emptyCellLocation, numberToTry)
         return validNumber
 
     def _validVertically(self, emptyCellLocation: tuple, numberToTry: int):
