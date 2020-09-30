@@ -6,6 +6,19 @@ from sudoku_api import *
 sudokuAPI = SudokuAPI(board)
 editableCells = sudokuAPI.getEmptyCells()
 wrongChoices = {}
+# x, y, width, height
+solveButton = {"rect": Rect(174, 10, 70, 35),
+               "text_position": (209, 28)}
+
+resetButton = {"rect": Rect(294, 10, 70, 35),
+               "text_position": (329, 28)}
+
+skipButton = {"rect": Rect(414, 10, 70, 35),
+              "text_position": (449, 28)}
+
+buttons = {"Solve": solveButton,
+           "Reset": resetButton,
+           "Skip": skipButton}
 
 pygame.init()
 
@@ -148,6 +161,16 @@ while running:
 
                 screen.blit(
                     textImage, textRect)
+
+    # Draw buttons
+
+    for buttonText, button in buttons.items():
+        pygame.draw.rect(screen, LIGHTBLUE, button['rect'])
+        textImage = font.render(buttonText, False, BLACK)
+        buttonTextCenteredPosition = (
+            button['text_position'][0], button['text_position'][1])
+        buttonTextRect = textImage.get_rect(center=buttonTextCenteredPosition)
+        screen.blit(textImage, buttonTextRect)
 
     if selectionRect and clickedInsideBoard and isEditableCell:
         pygame.draw.rect(screen, RED, selectionRect, 2)
