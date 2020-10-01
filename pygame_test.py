@@ -1,24 +1,16 @@
 import pygame
 from constants import *
 from pygame.locals import *
+from button import *
 from sudoku_api import *
 
 sudokuAPI = SudokuAPI(board)
 editableCells = sudokuAPI.getEmptyCells()
 wrongChoices = {}
-# x, y, width, height
-solveButton = {"rect": Rect(174, 10, 70, 35),
-               "text_position": (209, 28)}
 
-resetButton = {"rect": Rect(294, 10, 70, 35),
-               "text_position": (329, 28)}
-
-skipButton = {"rect": Rect(414, 10, 70, 35),
-              "text_position": (449, 28)}
-
-buttons = {"Solve": solveButton,
-           "Reset": resetButton,
-           "Skip": skipButton}
+buttons = [SolveButton("Solve", 70, 35, (174, 10), (209, 28)),
+           ResetButton("Reset", 70, 35, (294, 10), (329, 28)),
+           SkipButton("Skip", 70, 35, (414, 10), (449, 28))]
 
 pygame.init()
 
@@ -96,6 +88,12 @@ while running:
             clickedInsideBoard = True if (areaClicked[0] > 0 and areaClicked[1] > 0) and (
                 areaClicked[0] < SUDOKU_BOARD_WIDTH and areaClicked[1] < SUDOKU_BOARD_WIDTH) else False
 
+            mouse_click = pygame.mouse.get_pos()
+            if mouse_click:
+                for button in buttons:
+                    button.on_click(mouse_click)
+            # Button click events go here
+
         elif event.type == pygame.KEYDOWN:
             if selectionRect and clickedInsideBoard and isEditableCell and isInt(event.unicode):
                 chosenNumber = int(event.unicode)
@@ -164,12 +162,10 @@ while running:
 
     # Draw buttons
 
-    for buttonText, button in buttons.items():
-        pygame.draw.rect(screen, LIGHTBLUE, button['rect'])
-        textImage = font.render(buttonText, False, BLACK)
-        buttonTextCenteredPosition = (
-            button['text_position'][0], button['text_position'][1])
-        buttonTextRect = textImage.get_rect(center=buttonTextCenteredPosition)
+    for button in buttons:
+        pygame.draw.rect(screen, LIGHTBLUE, button.get_rect())
+        textImage = font.render(button.get_text(), False, BLACK)
+        buttonTextRect = textImage.get_rect(center=button.get_text_position())
         screen.blit(textImage, buttonTextRect)
 
     if selectionRect and clickedInsideBoard and isEditableCell:

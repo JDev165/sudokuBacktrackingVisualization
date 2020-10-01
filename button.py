@@ -1,3 +1,6 @@
+import pygame
+
+
 class Button:
     def __init__(self, text, width, height, position, text_position):
         self._text = text
@@ -5,41 +8,53 @@ class Button:
         self._height = height
         self._position = position
         self._color = None
-        self._button_rect = Rect(position[0], position[1], width, height)
+        self._button_rect = pygame.Rect(
+            position[0], position[1], width, height)
         self._text_position = text_position
 
-    def setColor(self, color):
+    def get_text_position(self):
+        return self._text_position
+
+    def get_text(self):
+        return self._text
+
+    def get_rect(self):
+        return self._button_rect
+
+    def set_color(self, color):
         self._color = color
 
-    def onClick(self, clickPos, object):
-        clicked = 1 if clickPos[0] < self._width and clickPos[1] < self._height else 0
+    def on_click(self, click_pos):
+        clicked = 1 if click_pos[0] < self._position[0] + \
+            self._width and click_pos[1] < self._position[1] + self._height else 0
 
         if clicked:
-            clickAction(object)
+            print("clicked")
+        # clickAction(object)
 
-    def clickAction(self, object):
+    def click_action(self, object):
         pass
 
 
 class SolveButton(Button):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, text, width, height, position, text_position):
+        super().__init__(text, width, height, position, text_position)
 
-    def clickAction(self, object):
+    def click_action(self, object):
         object.solve()
 
 
 class ResetButton(Button):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, text, width, height, position, text_position):
+        super().__init__(text, width, height, position, text_position)
 
-    def clickAction(self, object):
+    def click_action(self, object):
         object.reset()
 
 
 class SkipButton(Button):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, text, width, height, position, text_position):
+        super().__init__(text, width, height, position, text_position)
 
-    def clickAction(self, object):
+    def click_action(self, object):
         object.skip()
