@@ -3,14 +3,16 @@ from constants import *
 from pygame.locals import *
 from button import *
 from sudoku_api import *
+from sudoku import *
 
+sudokuSolver = Sudoku(board)
 sudokuAPI = SudokuAPI(board)
 editableCells = sudokuAPI.getEmptyCells()
 wrongChoices = {}
 
-buttons = [SolveButton("Solve", 70, 35, (174, 10), (209, 28)),
-           ResetButton("Reset", 70, 35, (294, 10), (329, 28)),
-           SkipButton("Skip", 70, 35, (414, 10), (449, 28))]
+buttons = [SolveButton("Solve", 70, 35, (174, 10), (209, 28), sudokuSolver),
+           ResetButton("Reset", 70, 35, (294, 10), (329, 28), None),
+           SkipButton("Skip", 70, 35, (414, 10), (449, 28), None)]
 
 pygame.init()
 
@@ -92,7 +94,6 @@ while running:
             if mouse_click:
                 for button in buttons:
                     button.on_click(mouse_click)
-            # Button click events go here
 
         elif event.type == pygame.KEYDOWN:
             if selectionRect and clickedInsideBoard and isEditableCell and isInt(event.unicode):

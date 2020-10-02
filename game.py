@@ -14,7 +14,6 @@ class Console:
         pygame.init()
         font = pygame.font.SysFont(self.gameFont, 35)
         self.screen = pygame.display.set_mode(self.screenSize)
-
         self.cartridge.play(pygame)
 
     def _game_loop(self):
