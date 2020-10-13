@@ -117,17 +117,24 @@ while running:
     pygame.draw.rect(screen, BLACK, sudoku_board, 1)
 
     # After screen fill so grid won't get overwritten
-    for xcord in range(startSmallSquares, stopSmallSquares, incrementSmallSquares):
+    for xcord in range(startSquares, stopSquares, incrementSquares):
+        pygame.draw.line(screen, BLACK, (xcord, y1cord),
+                         (xcord, y2cord), thicknessSquares)
         ycord = xcord
-        if ycord % 3 == 0:
-            pygame.draw.line(screen, BLACK, (xcord, y1cord),
-                             (xcord, y2cord), thicknessSquares)
-            pygame.draw.line(screen, BLACK, (x1cord, ycord),
-                             (x2cord, ycord), thicknessSquares)
-        else:
-            pygame.draw.line(screen, BLACK, (xcord, y1cord), (xcord, y2cord))
-            pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
+        pygame.draw.line(screen, BLACK, (x1cord, ycord),
+                         (x2cord, ycord), thicknessSquares)
 
+    for xcord in range(startSmallSquares, stopSmallSquares, incrementSmallSquares):
+        pygame.draw.line(screen, BLACK, (xcord, y1cord), (xcord, y2cord))
+        ycord = xcord
+        pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
+    print(startSquares)
+    print(stopSquares)
+    print(incrementSquares)
+    print(startSmallSquares)
+    print(startSmallSquares)
+    print(stopSmallSquares)
+    print(incrementSmallSquares)
     # Draw error shade before number or else number disappears
 
     for choice in wrongChoices:
