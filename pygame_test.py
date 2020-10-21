@@ -69,7 +69,7 @@ while running:
             cellYCord = (pygame.mouse.get_pos(
             )[1] - CENTERED_SUDOKU_ZERO_X_CORD) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
             selectionPygameCoords = tuple((cellXCord, cellYCord))
-            selectionPosition = toPygameCoordinates(
+            selectionPosition = toCenteredPygameCoordinates(
                 selectionPygameCoords, CENTERED_SUDOKU_ZERO_X_CORD)
 
             # Need to convert pygame coordinates to the sudoku 2d array indexes
@@ -128,13 +128,7 @@ while running:
         pygame.draw.line(screen, BLACK, (xcord, y1cord), (xcord, y2cord))
         ycord = xcord
         pygame.draw.line(screen, BLACK, (x1cord, ycord), (x2cord, ycord))
-    print(startSquares)
-    print(stopSquares)
-    print(incrementSquares)
-    print(startSmallSquares)
-    print(startSmallSquares)
-    print(stopSmallSquares)
-    print(incrementSmallSquares)
+
     # Draw error shade before number or else number disappears
 
     for choice in wrongChoices:

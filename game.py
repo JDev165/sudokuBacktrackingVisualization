@@ -8,12 +8,12 @@ class Console:
     def __init__(self, cartridge, font_name, screenSize):
         self._cartridge = cartridge
         self._font_name = font_name
-        self._font = None
         self._screenSize = screenSize
         self._screen = None
         self._running = True
         pygame.init()
         self._font = pygame.font.SysFont(self._font_name, 35)
+        self._cartridge.setFont(self._font)
         self._screen = pygame.display.set_mode(self._screenSize)
 
     def play_cartridge(self):
@@ -23,7 +23,7 @@ class Console:
                     self._running = False
                     pygame.quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    pass
+                    self._cartridge.mouseClickEvent(pygame.mouse.get_pos())
                 elif event.type == pygame.KEYDOWN:
                     pass
 
@@ -40,8 +40,8 @@ class Console:
 
 
 def main():
-    sudokuCartridge = Sudoku('Sudoku', SUDOKU_BOARD_SIZE)
-    console = Console(sudokuCartridge, 'arial', SCREEN_SIZE)
+    sudoku_cartridge = Sudoku('Sudoku', SUDOKU_BOARD_SIZE)
+    console = Console(sudoku_cartridge, 'arial', SCREEN_SIZE)
     console.play_cartridge()
 
 
