@@ -23,7 +23,7 @@ class Sudoku(Cartridge):
         self.boardSize = boardSize
         self.sudoku_board = Rect(self.boardSize, self.boardSize)
         self.font = None
-        self.wrongChoices = {}
+        self.wrong_choices = {}
         self.centered_board_zero_x_cord = 0
         self.centered_board_width_cord = 0
         self.centered_board_height_cord = 0
@@ -99,8 +99,44 @@ class Sudoku(Cartridge):
             pygame.draw.line(screen, BLACK, (self.centered_board_zero_x_cord,
                                              ycord), (self.centered_board_width_cord, ycord))
 
+        screen = self._drawWrongChoices(screen)
+        screen = self._drawCellNumbers(screen)
         screen = self._drawButtons(screen)
+        screen = self._drawSelectionRect(screen)
 
+        return screen
+
+    def _drawWrongChoices(self, screen):
+        for choice in self.wrong_choices:
+            pygameCellCoords = toPygameCoordinates(
+                choice, self.centered_board_zero_x_cord)
+            wrongRect = Rect(pygameCellCoords, (60, 60))
+            pygame.draw.rect(screen, WARNINGCOLOR, wrongRect)
+
+        return screen
+
+    def _drawCellNumbers(self, screen):
+        for row in range(len(self.board)):
+            for col in range(len(self.board)):
+                if self.board[row][col] != 0:
+                    cellNumber = str(self.board[row][col])
+                    textImage = self.font.render(cellNumber, False, BLACK)
+                    # flip the coordinates to match row/column positioning
+                    # x axis in pygame lines up in the same direction as grid column
+                    # y axis in pygame lines up in the same direction as grid row
+                    textPosition = ((col * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + self.centered_board_zero_x_cord,
+                                    (row * SUDOKU_BOARD_SMALL_SQUARE_SIZE) + self.centered_board_zero_x_cord)
+
+                    # Ex: cell 4's position is 234, 54 so to center the text
+                    # Add 60 // 2 to the with and height of the cell to shift the image to the center
+                    # Center fo cell 4 would be 264, 84
+                    textPositionCentered = (
+                        textPosition[0] + SUDOKU_BOARD_SMALL_SQUARE_SIZE // 2, textPosition[1] + SUDOKU_BOARD_SMALL_SQUARE_SIZE // 2)
+
+                    textRect = textImage.get_rect(center=textPositionCentered)
+
+                    screen.blit(
+                        textImage, textRect)
         return screen
 
     def _drawButtons(self, screen):
@@ -110,6 +146,12 @@ class Sudoku(Cartridge):
             buttonTextRect = textImage.get_rect(
                 center=button.get_text_position())
             screen.blit(textImage, buttonTextRect)
+
+        return screen
+
+    def _drawSelectionRect(self, screen):
+        if self.selection_rect and self.clicked_inside_board and self.is_editable_cell:
+            pygame.draw.rect(screen, RED, self.selection_rect, 2)
 
         return screen
 
@@ -126,6 +168,23 @@ class Sudoku(Cartridge):
         if click_pos:
             for button in self.buttons:
                 button.on_click(click_pos)
+
+    def keydownEvent(self, keyChar):
+        if self.selection_rect and self.clicked_inside_board and self.is_editable_cell and isInt(event.unicode):
+            chosen_number = int(event.unicode)
+            row = self.sudoku_array_coords[0]
+            col = self.sudoku_array_coords[1]
+
+            pygame_coords = (col, row)
+            if not sudokuAPI.isValid(self.sudoku_array_coords, chosen_number):
+                # Need to flip the coordinates again to fit pygame board
+                self.wr[pygame_coords] = chosen_number
+            else:
+                # Second argument prevents an error if
+                # Key doesn't exists in dictionary
+                self.wrong_choices.pop(pygame_coords, None)
+
+                self.board[row][col] = chosen_number
 
     def _setSelectionPosition(self, selection_pygame_coords):
         self.selection_pos = toCenteredPygameCoordinates(
