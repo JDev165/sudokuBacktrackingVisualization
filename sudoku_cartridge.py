@@ -160,9 +160,10 @@ class Sudoku(Cartridge):
             click_pos[0] - self.centered_board_zero_x_cord) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
         cellYCord = (
             click_pos[1] - self.centered_board_zero_x_cord) // SUDOKU_BOARD_SMALL_SQUARE_SIZE
+        sudokuArrayCoordinates = (cellYCord, cellXCord)
+        self._setIsEditableCell(sudokuArrayCoordinates)
         selection_pygame_coords = tuple((cellXCord, cellYCord))
         self._setSelectionPosition(selection_pygame_coords)
-        self._setIsEditableCell(selection_pygame_coords)
         self._setClickedInsideBoard(click_pos)
 
         if click_pos:
@@ -178,7 +179,7 @@ class Sudoku(Cartridge):
             pygame_coords = (col, row)
             if not sudokuAPI.isValid(self.sudoku_array_coords, chosen_number):
                 # Need to flip the coordinates again to fit pygame board
-                self.wr[pygame_coords] = chosen_number
+                self.wrong_choices[pygame_coords] = chosen_number
             else:
                 # Second argument prevents an error if
                 # Key doesn't exists in dictionary
